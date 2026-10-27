@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "dist/Logic_RGB_graficos/browser",
+    "public": "dist/espectro-angular/browser",
     "ignore": [
       "firebase.json",
       "**/.*",
@@ -14,3 +14,4 @@
     ]
   }
 }
+
