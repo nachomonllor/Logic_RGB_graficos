@@ -1,0 +1,108 @@
+<section class="admin">
+  <header class="top">
+    <button class="btn small white" (click)="back()">← Niveles</button>
+    <h1>✦ Diseñador de niveles</h1>
+    <div class="top-actions">
+      <button class="btn small white" [disabled]="!d.canUndo()" (click)="d.undo()">↶<span class="hide-sm"> Deshacer</span></button>
+      <button class="btn small white" (click)="sound.toggle()">{{ sound.muted() ? '🔇' : '🔊' }}</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <!-- ===== Herramientas ===== -->
+    <aside class="panel">
+      <h3>Tablero</h3>
+      <div class="size">
+        <label>Filas <input type="number" min="3" max="20" [value]="rowsIn()" (input)="rowsIn.set(num($event))"></label>
+        <span>×</span>
+        <label>Columnas <input type="number" min="3" max="20" [value]="colsIn()" (input)="colsIn.set(num($event))"></label>
+        <button class="btn small" (click)="applySize()">Aplicar</button>
+      </div>
+
+      <h3>Herramientas</h3>
+      <div class="tools">
+        @for (t of tools; track t.id) {
+          <button class="tool" [class.on]="d.tool() === t.id" (click)="setTool(t.id)">
+            <span class="ic">{{ t.icon }}</span>{{ t.name }}
+          </button>
+        }
+      </div>
+
+      @if (d.tool() === 'glass') {
+        <h3>Tipo de vidrio</h3>
+        <div class="glass-types">
+          @for (g of glassTypes; track g) {
+            <button class="gt" [class.on]="d.glassType() === g" (click)="setGlass(g)" [title]="g || 'transparente'">
+              <svg width="40" height="40" viewBox="-20 -20 40 40"><g appShield [t]="g" [size]="32"></g></svg>
+            </button>
+          }
+        </div>
+        <p class="note">{{ d.glassType() ? 'Vidrio ' + d.glassType() : 'Vidrio transparente: no cambia el color, sirve para armar piezas.' }}</p>
+      }
+      @if (d.tool() === 'projector') {
+        <h3>Dirección (adentro del tablero)</h3>
+        <div class="dirs">
+          @for (dd of dirs; track dd.id) {
+            <button class="gt" [class.on]="d.projectorDir() === dd.id" (click)="setDir(dd.id)">{{ dd.icon }}</button>
+          }
+        </div>
+      }
+      <p class="help">{{ toolHelp() }}</p>
+    </aside>
+
+    <!-- ===== Tablero ===== -->
+    <main class="center">
+      @if (d.display().alt) {
+        <div class="alt-banner">Mostrando otra solución que encontró el solver · <button class="link" (click)="d.toggleAlt()">volver a mi diseño</button></div>
+      }
+      <app-design-board />
+      <div class="status">{{ d.status() }}</div>
+    </main>
+
+    <!-- ===== Nivel ===== -->
+    <aside class="panel">
+      <h3>Nivel</h3>
+      <label class="field">Nombre <input type="text" [value]="d.state().name" (input)="d.setName(text($event))"></label>
+      <label class="check"><input type="checkbox" [checked]="d.state().rotatable" (change)="d.setOption('rotatable', checked($event))"> Las piezas se pueden girar</label>
+      <label class="check"><input type="checkbox" [checked]="d.state().shuffle" [disabled]="!d.state().rotatable" (change)="d.setOption('shuffle', checked($event))"> Entregarlas giradas al azar</label>
+      <p class="note">{{ d.summary().glasses }} vidrios · {{ d.summary().tray }} piezas a la bandeja · {{ d.summary().locked }} con candado</p>
+
+      <h3>Sensores</h3>
+      @if (!sensors().length) { <p class="note">Todavía no hay proyectores.</p> }
+      <div class="sensors">
+        @for (s of sensors(); track s.letter) {
+          <div class="sens" [class.ok]="s.ok">
+            <span class="tag">{{ s.letter }}</span>
+            pide <span class="sw" [style.background]="s.targetCol"></span>{{ s.targetName }}
+            · llega <span class="sw" [style.background]="s.gotCol"></span>{{ s.gotName }}
+          </div>
+        }
+      </div>
+      <button class="btn wide" (click)="d.takeTargets()">🎯 Tomar colores actuales como objetivo</button>
+
+      <h3>Verificar</h3>
+      <button class="btn white wide" [disabled]="d.verifying()" (click)="d.verify()">{{ d.verifying() ? 'Buscando soluciones…' : '🔍 Verificar con el solver' }}</button>
+      @if (d.verifyResult(); as r) {
+        <div class="result" [class]="r.kind">
+          <p>{{ r.text }}</p>
+          @for (x of r.extra; track $index) { <p class="extra">• {{ x }}</p> }
+          @if (r.kind === 'multiple') {
+            <button class="btn small white" (click)="d.toggleAlt()">{{ d.display().alt ? 'Volver a mi diseño' : 'Ver la otra solución' }}</button>
+          }
+        </div>
+      }
+
+      <h3>Acciones</h3>
+      <div class="actions">
+        <button class="btn" (click)="test()">▶ Probar nivel</button>
+        <button class="btn white" (click)="download()">⬇ Exportar JSON</button>
+        <label class="btn white file">⬆ Importar JSON<input type="file" accept=".json,application/json" (change)="upload($event)"></label>
+        <select class="pick" (change)="loadBuiltIn($event)">
+          <option value="">📂 Abrir un nivel del juego…</option>
+          @for (b of builtIn; track b.i) { <option [value]="b.i">{{ b.label }}</option> }
+        </select>
+        <button class="btn white" (click)="newDesign()">🗑 Nuevo diseño</button>
+      </div>
+    </aside>
+  </div>
+</section>

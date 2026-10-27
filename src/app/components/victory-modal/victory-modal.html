@@ -1,0 +1,16 @@
+<div class="modal" [class.show]="game.showVictory()">
+  <div class="modal-content">
+    <h2>¡Todos los sensores encendidos!</h2>
+    <div class="stars">
+      @for (on of vm().stars; track $index) {
+        <span [class.on]="on" [style.animation-delay]="($index * .18) + 's'">★</span>
+      }
+    </div>
+    <p>Tiempo: {{ vm().time }}</p>
+    <p>{{ vm().hints }}</p>
+    <div class="btns">
+      <button class="btn white" (click)="levels.emit()">Niveles</button>
+      <button class="btn" (click)="next.emit()">{{ vm().nextLabel }}</button>
+    </div>
+  </div>
+</div>

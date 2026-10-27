@@ -1,0 +1,10 @@
+@let v = vm();
+@for (l of v.links; track $index) {
+  <svg:line [attr.x1]="l.x1" [attr.y1]="l.y1" [attr.x2]="l.x2" [attr.y2]="l.y2"
+    [attr.stroke]="locked() ? '#c9cdf5' : '#ffd25e'" [attr.stroke-width]="v.step * .2" stroke-linecap="round" />
+  <svg:line [attr.x1]="l.x1" [attr.y1]="l.y1" [attr.x2]="l.x2" [attr.y2]="l.y2"
+    stroke="#0b0e22" [attr.stroke-width]="v.step * .08" stroke-linecap="round" opacity=".6" />
+}
+@for (tile of v.tiles; track $index) {
+  <svg:g appShield [t]="tile.t" [size]="v.tile" [locked]="locked()" [attr.transform]="tile.transform"></svg:g>
+}

@@ -1,0 +1,69 @@
+.intro {
+  justify-content: center;
+  gap: 18px;
+  position: relative;
+}
+
+.corner {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+}
+
+.logo {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+
+  span {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    border: 3px solid #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    font-weight: 700;
+    color: #1a1433;
+    opacity: 0;
+    animation: drop .6s cubic-bezier(.34, 1.56, .64, 1) forwards, glowT 3s ease-in-out infinite;
+  }
+}
+@keyframes drop {
+  from { opacity: 0; transform: translateY(-120px) rotate(-25deg); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes glowT {
+  0%, 100% { box-shadow: 0 0 10px 0 var(--g); }
+  50% { box-shadow: 0 0 26px 6px var(--g); }
+}
+
+.tagline {
+  max-width: 440px;
+  text-align: center;
+  font-size: 18px;
+  line-height: 1.4;
+  margin: 0;
+  color: #dfe3ff;
+}
+
+.demo { overflow: visible; }
+.fade { transition: opacity .3s; }
+.flow {
+  stroke-dasharray: 3 13;
+  animation: flow .9s linear infinite;
+}
+@keyframes flow { to { stroke-dashoffset: -16; } }
+
+.buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+@media (max-width: 480px) {
+  .logo span { width: 40px; height: 40px; font-size: 22px; }
+}

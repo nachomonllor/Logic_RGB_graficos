@@ -1,0 +1,20 @@
+<div class="tray">
+  @for (p of pieces(); track p.pi) {
+    <div class="item piece" [class.empty]="p.used" [class.sel]="p.sel" (pointerdown)="pieceDown.emit({ ev: $event, pi: p.pi })">
+      <svg [attr.width]="p.w" [attr.height]="p.h" [attr.viewBox]="(-p.step / 2) + ' ' + (-p.step / 2) + ' ' + p.w + ' ' + p.h">
+        <g appPiece [cells]="p.cells" [step]="p.step"></g>
+      </svg>
+      @if (!p.used && p.rotatable) {
+        <button class="rot" title="Girar" (pointerdown)="$event.stopPropagation()" (click)="rotate($event, p.pi)">↻</button>
+      }
+    </div>
+  }
+  @for (s of singles(); track s.t) {
+    <div class="item" [class.empty]="!s.n" [class.sel]="s.sel" [attr.data-t]="s.t" (pointerdown)="singleDown.emit({ ev: $event, t: s.t })">
+      <svg width="56" height="56" viewBox="-28 -28 56 56">
+        <g appShield [t]="s.t" [size]="48"></g>
+      </svg>
+      <span class="count">×{{ s.n }}</span>
+    </div>
+  }
+</div>

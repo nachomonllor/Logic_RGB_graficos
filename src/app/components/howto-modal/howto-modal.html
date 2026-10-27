@@ -1,0 +1,18 @@
+<div class="modal" [class.show]="open()">
+  <div class="modal-content">
+    <h2>Cómo se juega</h2>
+    <ul class="rules">
+      <li>Cada rayo sale <b>blanco</b> (rojo + verde + azul) y llega a un <b>sensor</b> que pide un color.</li>
+      <li>Un escudo <b>−R</b> quita el rojo de la luz que lo atraviesa; <b>+R</b> lo vuelve a sumar. Igual con verde (G) y azul (B).</li>
+      <li><b>Arrastrá</b> un escudo de la bandeja a una celda por donde pase un rayo, o <b>tocá</b> el escudo y después la celda.</li>
+      <li>En un <b>cruce</b> el escudo afecta a los <b>dos</b> rayos. ¡Ahí está la clave!</li>
+      <li>Tocá un escudo puesto para devolverlo, o arrastralo a otra celda.</li>
+      <li>Las celdas rayadas no aceptan escudos, y los escudos con 🔒 ya vienen fijos.</li>
+      <li><b>Piezas pegadas:</b> varios escudos unidos que se mueven juntos. Pueden caer sobre dos rayos a la vez. Giralas con <b>↻</b> (o la tecla R mientras arrastrás).</li>
+      <li><b>Escudo doble:</b> una celda con dos efectos, por ejemplo <b>−R +G</b>.</li>
+      <li>Ganás cuando todos los sensores reciben su color.</li>
+    </ul>
+    <p class="small">Mezclas de luz: rojo + verde = amarillo · verde + azul = cian · rojo + azul = magenta · los tres = blanco · ninguno = negro.</p>
+    <div class="btns"><button class="btn" (click)="closed.emit()">¡A jugar!</button></div>
+  </div>
+</div>

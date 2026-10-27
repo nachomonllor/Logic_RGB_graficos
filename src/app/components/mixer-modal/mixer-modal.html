@@ -1,0 +1,28 @@
+<div class="modal" [class.show]="open()">
+  <div class="modal-content">
+    <h2>Mezclador de luz</h2>
+    <p class="small">Prendé y apagá cada luz y mirá qué color sale.</p>
+    <svg width="240" height="200" viewBox="0 0 240 200">
+      <rect x="0" y="0" width="240" height="200" rx="18" fill="#000" />
+      <g class="iso">
+        @for (l of lights; track l.ch) {
+          @if (on()[l.ch]) {
+            <circle [attr.cx]="l.x" [attr.cy]="l.y" r="55" [attr.fill]="l.col" class="screen" />
+          }
+        }
+      </g>
+    </svg>
+    <div class="row">
+      @for (l of lights; track l.ch) {
+        <button class="mix-t" [class.off]="!on()[l.ch]" [style.background]="l.btn" (click)="toggle(l.ch)">{{ l.ch }}</button>
+      }
+    </div>
+    <p>Luz que sale: <span class="sw" [style.background]="result().col"></span> <b>{{ result().name }}</b></p>
+    <div class="cmp">
+      <div><b>Pintura (pigmento)</b><br>Mezclar oscurece. Azul + amarillo = verde. Todos juntos dan casi negro.</div>
+      <div><b>Luz</b><br>Sumar aclara. Rojo + verde = amarillo. Los tres juntos dan blanco.</div>
+    </div>
+    <p class="small">Truco: pensá cada rayo como tres lamparitas, una roja, una verde y una azul. Un escudo <b>−</b> apaga una; un escudo <b>+</b> la vuelve a prender.</p>
+    <div class="btns"><button class="btn" (click)="closed.emit()">Entendido</button></div>
+  </div>
+</div>

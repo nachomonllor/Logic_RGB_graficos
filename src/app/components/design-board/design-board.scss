@@ -1,0 +1,26 @@
+:host { display: block; }
+
+.board {
+  display: block;
+  margin: 0 auto;
+  touch-action: none;
+  user-select: none;
+  cursor: crosshair;
+}
+
+text {
+  font-family: 'Fredoka', system-ui, sans-serif;
+  pointer-events: none;
+}
+
+.flow {
+  /* fotones: puntitos redondos que viajan por el rayo */
+  stroke-dasharray: 0 16;
+  stroke-linecap: round;
+  animation: flow .9s linear infinite;
+}
+.tint { transition: fill .25s, stroke .25s; }
+@keyframes flow { to { stroke-dashoffset: -16; } }
+
+.slot { animation: pulse 1.2s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: .4; } }

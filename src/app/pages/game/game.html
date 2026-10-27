@@ -1,0 +1,45 @@
+<section class="screen">
+  <div class="hud">
+    <button class="btn small white" (click)="back()">←</button>
+    <div>
+      <h1>{{ game.title() }}</h1>
+      <div class="sub">{{ game.subtitle() }}</div>
+    </div>
+    <button class="btn small white" (click)="sound.toggle()">{{ sound.muted() ? '🔇' : '🔊' }}</button>
+  </div>
+
+  <div class="toolbar">
+    <button class="btn white" [disabled]="!game.canUndo() || game.won()" (click)="game.undo()">↶<span class="hide-sm"> Deshacer</span></button>
+    <button class="btn white" (click)="game.reset()">↺<span class="hide-sm"> Reiniciar</span></button>
+    <button class="btn" (click)="hint()">💡 Pista</button>
+    <button class="btn white" (click)="openMixer()">🎨<span class="hide-sm"> Mezclador</span></button>
+    <button class="btn white" (click)="howto.set(true)">?</button>
+  </div>
+
+  <app-board (cellDown)="onCellDown($event)" />
+  <app-tray (singleDown)="onSingleDown($event)" (pieceDown)="onPieceDown($event)" />
+  <app-sensors />
+
+  <div class="status" [class]="game.status().kind">{{ game.status().text }}</div>
+  <div class="mix">
+    <b class="r">R</b> + <b class="g">G</b> = <b class="y">amarillo</b> ·
+    <b class="g">G</b> + <b class="b">B</b> = <b class="c">cian</b> ·
+    <b class="r">R</b> + <b class="b">B</b> = <b class="m">magenta</b> · R + G + B = <b>blanco</b>
+  </div>
+</section>
+
+@if (ghost(); as g) {
+  <div class="ghost" [style.left.px]="g.x" [style.top.px]="g.y" [style.transform]="g.transform">
+    <svg [attr.width]="g.w" [attr.height]="g.h" [attr.viewBox]="g.vb">
+      @if (g.single) {
+        <g appShield [t]="g.t" [size]="g.size"></g>
+      } @else {
+        <g appPiece [cells]="g.cells" [step]="g.size"></g>
+      }
+    </svg>
+  </div>
+}
+
+<app-mixer-modal [open]="mixer()" (closed)="mixer.set(false); sound.ui()" />
+<app-howto-modal [open]="howto()" (closed)="howto.set(false); sound.ui()" />
+<app-victory-modal (next)="next()" (levels)="toLevels()" />

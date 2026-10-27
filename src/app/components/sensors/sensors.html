@@ -1,0 +1,10 @@
+<div class="sensors">
+  @for (s of rows(); track s.letter) {
+    <div class="sens" [class.ok]="s.ok">
+      <span class="tag">{{ s.letter }}</span>
+      pide <span class="sw" [style.background]="s.targetCol"></span><b>{{ s.targetName }}</b>
+      · llega <span class="sw" [style.background]="s.gotCol"></span>{{ s.gotName }}
+      @if (s.ok) { ✓ }
+    </div>
+  }
+</div>

@@ -1,0 +1,34 @@
+@let v = vm();
+@if (v.glass) {
+  <svg:rect [attr.x]="-v.h" [attr.y]="-v.h" [attr.width]="v.s" [attr.height]="v.s" [attr.rx]="v.s * .24"
+    fill="rgba(200,230,255,.16)" stroke="#dfe9ff" [attr.stroke-width]="v.s * .07" />
+  <svg:path [attr.d]="'M' + (-v.h + v.s * .2) + ' ' + (v.h - v.s * .35) + ' L' + (v.h - v.s * .35) + ' ' + (-v.h + v.s * .2)"
+    stroke="rgba(255,255,255,.55)" [attr.stroke-width]="v.s * .07" stroke-linecap="round" />
+  <svg:path [attr.d]="'M' + (-v.h + v.s * .42) + ' ' + (v.h - v.s * .2) + ' L' + (v.h - v.s * .2) + ' ' + (-v.h + v.s * .42)"
+    stroke="rgba(255,255,255,.3)" [attr.stroke-width]="v.s * .05" stroke-linecap="round" />
+} @else if (v.single) {
+  @let p = v.list[0];
+  <svg:rect [attr.x]="-v.h" [attr.y]="-v.h" [attr.width]="v.s" [attr.height]="v.s" [attr.rx]="v.s * .24"
+    [attr.fill]="p.add ? p.col : '#0b0e22'" [attr.stroke]="p.add ? '#fff' : p.col" [attr.stroke-width]="v.s * .1" />
+  @if (!p.add) {
+    <svg:rect [attr.x]="-v.h + v.s * .14" [attr.y]="-v.h + v.s * .14" [attr.width]="v.s * .72" [attr.height]="v.s * .72"
+      [attr.rx]="v.s * .16" [attr.fill]="p.col" opacity=".18" />
+  }
+  <svg:text x="0" [attr.y]="v.s * .05" text-anchor="middle" dominant-baseline="middle" [attr.font-size]="v.s * .5"
+    font-weight="700" [attr.fill]="p.add ? '#fff' : p.col">{{ p.label }}</svg:text>
+} @else {
+  <svg:rect [attr.x]="-v.h" [attr.y]="-v.h" [attr.width]="v.s" [attr.height]="v.s" [attr.rx]="v.s * .24"
+    fill="#0b0e22" stroke="#fff" [attr.stroke-width]="v.s * .08" />
+  @for (p of v.list; track $index) {
+    <svg:rect [attr.x]="-v.h + v.s * .1" [attr.y]="p.y" [attr.width]="v.s * .8" [attr.height]="v.s * .38" [attr.rx]="v.s * .1"
+      [attr.fill]="p.add ? p.col : 'none'" [attr.stroke]="p.col" [attr.stroke-width]="v.s * .06" />
+    <svg:text x="0" [attr.y]="p.y + v.s * .21" text-anchor="middle" dominant-baseline="middle" [attr.font-size]="v.s * .3"
+      font-weight="700" [attr.fill]="p.add ? '#fff' : p.col">{{ p.label }}</svg:text>
+  }
+}
+@if (locked()) {
+  <svg:rect [attr.x]="-v.h" [attr.y]="-v.h" [attr.width]="v.s" [attr.height]="v.s" [attr.rx]="v.s * .24" fill="none"
+    stroke="#c9cdf5" [attr.stroke-width]="v.s * .05" [attr.stroke-dasharray]="(v.s * .12) + ' ' + (v.s * .08)" />
+  <svg:text [attr.x]="v.h - v.s * .12" [attr.y]="-v.h + v.s * .16" text-anchor="middle" dominant-baseline="middle"
+    [attr.font-size]="v.s * .3">🔒</svg:text>
+}

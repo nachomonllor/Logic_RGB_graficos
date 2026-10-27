@@ -1,0 +1,121 @@
+@if (vm(); as v) {
+  <svg #svg class="board" [attr.width]="v.W" [attr.height]="v.H" [attr.viewBox]="'0 0 ' + v.W + ' ' + v.H"
+       (pointerdown)="onPointerDown($event)">
+    <defs>
+      <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur [attr.stdDeviation]="v.s * .11" />
+      </filter>
+      <filter id="glowWide" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur [attr.stdDeviation]="v.s * .3" />
+      </filter>
+      <pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+        <rect width="8" height="8" fill="#10132b" />
+        <line x1="0" y1="0" x2="0" y2="8" stroke="#3a3f6e" stroke-width="4" />
+      </pattern>
+    </defs>
+
+    <rect [attr.x]="v.boardX" [attr.y]="v.boardY" [attr.width]="v.boardW" [attr.height]="v.boardH" rx="18"
+          fill="#161b3a" stroke="#3a4180" stroke-width="3" />
+
+    <!-- resplandor ancho por debajo de las baldosas (se ve a través de ellas) -->
+    <g filter="url(#glowWide)" opacity=".6">
+      @for (l of v.lines; track $index) {
+        @if (!l.dark) {
+          <line [attr.x1]="l.x1" [attr.y1]="l.y1" [attr.x2]="l.x2" [attr.y2]="l.y2" [attr.stroke]="l.col" [attr.stroke-width]="v.s * .7" />
+        }
+      }
+    </g>
+
+    <!-- celdas: un poco transparentes e iluminadas con el color del rayo que las cruza -->
+    @for (c of v.cells; track c.k) {
+      <rect [attr.x]="c.x" [attr.y]="c.y" [attr.width]="v.s - 6" [attr.height]="v.s - 6" [attr.rx]="v.s * .16"
+            [attr.fill]="c.fill" [attr.stroke]="c.blocked ? '#3a3f6e' : 'none'" stroke-width="1.5" />
+      @if (c.tint) {
+        <rect class="tint" [attr.x]="c.x" [attr.y]="c.y" [attr.width]="v.s - 6" [attr.height]="v.s - 6" [attr.rx]="v.s * .16"
+              [attr.fill]="c.tint" fill-opacity=".2" [attr.stroke]="c.tint" stroke-opacity=".55" stroke-width="1.5" />
+      }
+      @if (c.cross) {
+        <rect [attr.x]="c.cx - v.s * .36" [attr.y]="c.cy - v.s * .36" [attr.width]="v.s * .72" [attr.height]="v.s * .72"
+              [attr.rx]="v.s * .12" fill="none" stroke="#8a91ff" stroke-width="2" stroke-dasharray="4 4" opacity=".55" />
+      }
+    }
+
+    <!-- resaltado de celdas válidas -->
+    @for (h of highlights(); track $index) {
+      <rect [attr.x]="h.x" [attr.y]="h.y" [attr.width]="v.s - 8" [attr.height]="v.s - 8" [attr.rx]="v.s * .16"
+            [attr.fill]="h.fill" [attr.stroke]="h.stroke" [attr.stroke-width]="h.w" [class.hl]="h.pulse" />
+    }
+
+    <!-- rayos: brillo, núcleo y flujo -->
+    <g filter="url(#glow)" opacity=".8">
+      @for (l of v.lines; track $index) {
+        @if (!l.dark) {
+          <line [attr.x1]="l.x1" [attr.y1]="l.y1" [attr.x2]="l.x2" [attr.y2]="l.y2" [attr.stroke]="l.col" [attr.stroke-width]="v.s * .44" />
+        }
+      }
+    </g>
+    @for (l of v.lines; track $index) {
+      @if (l.dark) {
+        <line [attr.x1]="l.x1" [attr.y1]="l.y1" [attr.x2]="l.x2" [attr.y2]="l.y2" stroke="#4a4f7a" [attr.stroke-width]="v.s * .06" stroke-dasharray="3 6" />
+      } @else {
+        <line [attr.x1]="l.x1" [attr.y1]="l.y1" [attr.x2]="l.x2" [attr.y2]="l.y2" [attr.stroke]="l.col" [attr.stroke-width]="v.s * .22" />
+      }
+    }
+    @for (l of v.lines; track $index) {
+      @if (!l.dark) {
+        <line class="flow" [attr.x1]="l.x1" [attr.y1]="l.y1" [attr.x2]="l.x2" [attr.y2]="l.y2" stroke="#fff" [attr.stroke-width]="v.s * .085" opacity=".9" />
+      }
+    }
+
+    <!-- proyectores -->
+    @for (e of v.emitters; track $index) {
+      <g [attr.transform]="'translate(' + e.x + ' ' + e.y + ') rotate(' + e.rot + ')'">
+        <rect [attr.x]="-v.s * .3" [attr.y]="-v.s * .24" [attr.width]="v.s * .5" [attr.height]="v.s * .48" [attr.rx]="v.s * .1"
+              fill="#e9ecff" stroke="#8a91ff" stroke-width="2" />
+        <circle [attr.cx]="v.s * .12" cy="0" [attr.r]="v.s * .12" fill="#fff" filter="url(#glow)" />
+        <circle [attr.cx]="v.s * .12" cy="0" [attr.r]="v.s * .08" fill="#fff" />
+        <path [attr.d]="'M' + (v.s * .22) + ' ' + (-v.s * .1) + ' L' + (v.s * .32) + ' 0 L' + (v.s * .22) + ' ' + (v.s * .1)" fill="none" stroke="#8a91ff" stroke-width="2.5" />
+      </g>
+    }
+
+    <!-- sensores -->
+    @for (sn of v.sensors; track $index) {
+      <g [attr.transform]="'translate(' + sn.x + ' ' + sn.y + ')'">
+        <g [class.sensor-ok]="sn.ok">
+          @if (sn.ok) {
+            <circle [attr.r]="sn.r * 1.25" [attr.fill]="sn.target" opacity=".5" filter="url(#glow)" />
+          }
+          <circle [attr.r]="sn.r" fill="#0b0e22" [attr.stroke]="sn.ring" [attr.stroke-width]="sn.r * .3" [attr.stroke-dasharray]="sn.noTarget ? '3 3' : null" />
+          <circle [attr.r]="sn.r * .53" [attr.fill]="sn.fill" [attr.stroke]="sn.dark ? '#4a4f7a' : 'none'" stroke-width="2" />
+          <text x="0" [attr.y]="sn.r * .06" text-anchor="middle" dominant-baseline="middle" [attr.font-size]="sn.r * .65"
+                font-weight="700" [attr.fill]="sn.textFill">{{ sn.label }}</text>
+        </g>
+        @if (sn.ping) {
+          <circle class="ping" [attr.r]="sn.r * 1.2" fill="none" [attr.stroke]="sn.target" stroke-width="4" />
+        }
+      </g>
+    }
+
+    <!-- escudos fijos, piezas y escudos del jugador -->
+    @for (f of v.fixedSingles; track $index) {
+      <g appShield [t]="f.t" [size]="v.s * .6" [locked]="true" [attr.transform]="f.transform"></g>
+    }
+    @for (g of v.fixedPieces; track $index) {
+      <g appPiece [cells]="g.cells" [links]="g.links" [step]="v.s" [locked]="true" [attr.transform]="g.transform"></g>
+    }
+    @for (p of v.pieces; track p.pi) {
+      <g appPiece class="grab" [cells]="p.cells" [links]="p.links" [step]="v.s" [attr.transform]="p.transform"></g>
+    }
+    @for (sg of v.singles; track sg.k) {
+      <g appShield class="grab" [t]="sg.t" [size]="v.s * .6" [attr.transform]="sg.transform"></g>
+    }
+    @for (f of v.flash; track $index) {
+      <rect class="ping" [attr.x]="f.x" [attr.y]="f.y" [attr.width]="v.s * .84" [attr.height]="v.s * .84" [attr.rx]="v.s * .2"
+            fill="none" stroke="#ffd25e" stroke-width="4" />
+    }
+    @for (f of v.wrong; track $index) {
+      <rect class="ping" [attr.x]="f.x" [attr.y]="f.y" [attr.width]="v.s * .84" [attr.height]="v.s * .84" [attr.rx]="v.s * .2"
+            fill="none" stroke="#ff4d5e" stroke-width="4" />
+    }
+  </svg>
+}

@@ -1,0 +1,42 @@
+.sensors {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 10px;
+  max-width: 680px;
+}
+
+.sens {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, .07);
+  border-radius: 999px;
+  padding: 4px 10px 4px 4px;
+  font-size: 14px;
+  border: 2px solid rgba(255, 255, 255, .12);
+
+  &.ok { border-color: #3ddc84; background: rgba(61, 220, 132, .12); }
+}
+
+.tag {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  color: #1a1433;
+  font-weight: 700;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sw {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, .6);
+  display: inline-block;
+}

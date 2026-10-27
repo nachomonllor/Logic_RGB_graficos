@@ -1,0 +1,17 @@
+.stars {
+  font-size: 48px;
+  letter-spacing: 6px;
+  color: #ddd;
+
+  span { display: inline-block; }
+  span.on {
+    color: #ffc400;
+    text-shadow: 0 3px 0 #b27800;
+    animation: starIn .5s cubic-bezier(.34, 1.56, .64, 1) both;
+  }
+}
+
+@keyframes starIn {
+  from { transform: scale(0) rotate(-90deg); }
+  to { transform: none; }
+}

@@ -1,0 +1,34 @@
+<section class="screen">
+  <div class="topbar">
+    <button class="btn small white" (click)="back()">← Inicio</button>
+    <h2>Niveles</h2>
+    <button class="btn small white" (click)="sound.toggle()">{{ sound.muted() ? '🔇' : '🔊' }}</button>
+  </div>
+  @for (g of groups(); track g.name) {
+    <div class="group">
+      <h3>{{ g.title }}</h3>
+      <div class="grid">
+        @for (it of g.items; track it.n) {
+          <button class="level" [class.done]="it.done" (click)="open(it.n)">
+            <span class="n">{{ it.n }}</span>
+            <span class="st">
+              @for (on of it.stars; track $index) { <b [class.on]="on">★</b> }
+            </span>
+          </button>
+        }
+      </div>
+    </div>
+  }
+  <div class="group">
+    <h3>Nivel aleatorio</h3>
+    <div class="random">
+      @for (b of bands; track b.id) {
+        <button class="btn white" (click)="random(b.id)">{{ b.name }}</button>
+      }
+    </div>
+  </div>
+  <div class="group">
+    <h3>Admin</h3>
+    <button class="btn" (click)="admin()">✦ Diseñar niveles</button>
+  </div>
+</section>

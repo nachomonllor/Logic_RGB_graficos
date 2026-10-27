@@ -1,0 +1,33 @@
+<section class="screen intro">
+  <button class="btn small white corner" (click)="sound.toggle()">{{ sound.muted() ? '🔇' : '🔊' }}</button>
+  <div class="logo">
+    @for (l of letters; track $index) {
+      <span [style.background]="l.col" [style.--g]="l.col" [style.animation-delay]="l.delay">{{ l.ch }}</span>
+    }
+  </div>
+  <p class="tagline">La luz blanca lleva rojo, verde y azul. Poné escudos sobre los rayos para quitar o sumar colores y que cada sensor reciba el color que pide.</p>
+  <svg class="demo" width="320" height="170" viewBox="0 0 320 170">
+    <defs>
+      <filter id="dglow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4" /></filter>
+    </defs>
+    <rect x="0" y="0" width="320" height="170" rx="22" fill="#161b3a" stroke="#3a4180" stroke-width="3" />
+    <line x1="140" y1="70" x2="300" y2="70" stroke="#fff" stroke-width="5" />
+    <line x1="140" y1="70" x2="140" y2="156" stroke="#fff" stroke-width="5" />
+    @for (l of lines; track $index) {
+      <g class="fade" [style.opacity]="step() >= l.from ? 1 : 0">
+        <line [attr.x1]="l.x1" [attr.y1]="l.y1" [attr.x2]="l.x2" [attr.y2]="l.y2" [attr.stroke]="l.c" stroke-width="12" opacity=".5" filter="url(#dglow)" />
+        <line [attr.x1]="l.x1" [attr.y1]="l.y1" [attr.x2]="l.x2" [attr.y2]="l.y2" [attr.stroke]="l.c" stroke-width="5" stroke-linecap="round" />
+        <line class="flow" [attr.x1]="l.x1" [attr.y1]="l.y1" [attr.x2]="l.x2" [attr.y2]="l.y2" stroke="#fff" stroke-width="2" opacity=".7" />
+      </g>
+    }
+    <g class="fade" transform="translate(140 70)" [style.opacity]="step() >= 1 ? 1 : 0"><g appShield t="-R" [size]="30"></g></g>
+    <g class="fade" transform="translate(140 118)" [style.opacity]="step() >= 2 ? 1 : 0"><g appShield t="-G" [size]="26"></g></g>
+    <circle cx="306" cy="70" r="11" fill="#3de8ff" stroke="#fff" stroke-width="3" />
+    <circle cx="140" cy="160" r="11" fill="#4d7cff" stroke="#fff" stroke-width="3" />
+  </svg>
+  <div class="buttons">
+    <button class="btn big" (click)="play()">Jugar</button>
+    <button class="btn white" (click)="openHowto()">Cómo se juega</button>
+  </div>
+</section>
+<app-howto-modal [open]="howto()" (closed)="howto.set(false); sound.ui()" />

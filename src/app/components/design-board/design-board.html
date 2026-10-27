@@ -1,0 +1,86 @@
+@let v = vm();
+<svg #svg class="board" [attr.width]="v.W" [attr.height]="v.H" [attr.viewBox]="'0 0 ' + v.W + ' ' + v.H"
+     (pointerdown)="onDown($event)" (pointermove)="onMove($event)" (pointerup)="onUp($event)" (pointercancel)="onUp($event)"
+     (pointerleave)="hover.set(null)">
+  <defs>
+    <filter id="dglow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur [attr.stdDeviation]="v.s * .11" /></filter>
+    <filter id="dglowWide" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur [attr.stdDeviation]="v.s * .3" /></filter>
+    <pattern id="dhatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="8" height="8" fill="#10132b" />
+      <line x1="0" y1="0" x2="0" y2="8" stroke="#3a3f6e" stroke-width="4" />
+    </pattern>
+  </defs>
+
+  <rect [attr.x]="v.m - 6" [attr.y]="v.m - 6" [attr.width]="v.W - 2 * v.m + 12" [attr.height]="v.H - 2 * v.m + 12" rx="12"
+        fill="#161b3a" stroke="#3a4180" stroke-width="3" />
+
+  <g filter="url(#dglowWide)" opacity=".6">
+    @for (l of v.lines; track $index) {
+      @if (!l.dark) { <line [attr.x1]="l.x1" [attr.y1]="l.y1" [attr.x2]="l.x2" [attr.y2]="l.y2" [attr.stroke]="l.col" [attr.stroke-width]="v.s * .7" /> }
+    }
+  </g>
+
+  @for (c of v.cells; track c.k) {
+    <rect [attr.x]="c.x" [attr.y]="c.y" [attr.width]="v.s - 4" [attr.height]="v.s - 4" [attr.rx]="v.s * .14"
+          [attr.fill]="c.fill" [attr.stroke]="c.blocked ? '#3a3f6e' : 'none'" stroke-width="1.5" />
+    @if (c.tint) {
+      <rect class="tint" [attr.x]="c.x" [attr.y]="c.y" [attr.width]="v.s - 4" [attr.height]="v.s - 4" [attr.rx]="v.s * .14"
+            [attr.fill]="c.tint" fill-opacity=".2" [attr.stroke]="c.tint" stroke-opacity=".55" stroke-width="1.5" />
+    }
+    @if (c.cross) {
+      <rect [attr.x]="c.cx - v.s * .36" [attr.y]="c.cy - v.s * .36" [attr.width]="v.s * .72" [attr.height]="v.s * .72"
+            [attr.rx]="v.s * .12" fill="none" stroke="#8a91ff" stroke-width="1.5" stroke-dasharray="4 4" opacity=".5" />
+    }
+  }
+
+  @for (sl of v.slots; track $index) {
+    <circle class="slot" [attr.cx]="sl.x" [attr.cy]="sl.y" [attr.r]="v.s * .28" fill="rgba(255,210,94,.08)" stroke="#ffd25e" stroke-width="1.5" stroke-dasharray="3 4" />
+  }
+
+  <g filter="url(#dglow)" opacity=".8">
+    @for (l of v.lines; track $index) {
+      @if (!l.dark) { <line [attr.x1]="l.x1" [attr.y1]="l.y1" [attr.x2]="l.x2" [attr.y2]="l.y2" [attr.stroke]="l.col" [attr.stroke-width]="v.s * .44" /> }
+    }
+  </g>
+  @for (l of v.lines; track $index) {
+    @if (l.dark) {
+      <line [attr.x1]="l.x1" [attr.y1]="l.y1" [attr.x2]="l.x2" [attr.y2]="l.y2" stroke="#4a4f7a" [attr.stroke-width]="v.s * .06" stroke-dasharray="3 6" />
+    } @else {
+      <line [attr.x1]="l.x1" [attr.y1]="l.y1" [attr.x2]="l.x2" [attr.y2]="l.y2" [attr.stroke]="l.col" [attr.stroke-width]="v.s * .22" />
+      <line class="flow" [attr.x1]="l.x1" [attr.y1]="l.y1" [attr.x2]="l.x2" [attr.y2]="l.y2" stroke="#fff" [attr.stroke-width]="v.s * .085" opacity=".9" />
+    }
+  }
+
+  @for (e of v.emitters; track $index) {
+    <g [attr.transform]="'translate(' + e.x + ' ' + e.y + ') rotate(' + e.rot + ')'">
+      <rect [attr.x]="-v.s * .3" [attr.y]="-v.s * .24" [attr.width]="v.s * .5" [attr.height]="v.s * .48" [attr.rx]="v.s * .1"
+            fill="#e9ecff" stroke="#8a91ff" stroke-width="2" />
+      <circle [attr.cx]="v.s * .12" cy="0" [attr.r]="v.s * .1" fill="#fff" />
+      <path [attr.d]="'M' + (v.s * .22) + ' ' + (-v.s * .1) + ' L' + (v.s * .32) + ' 0 L' + (v.s * .22) + ' ' + (v.s * .1)" fill="none" stroke="#8a91ff" stroke-width="2.5" />
+    </g>
+  }
+  @for (sn of v.sensors; track $index) {
+    <g [attr.transform]="'translate(' + sn.x + ' ' + sn.y + ')'">
+      @if (sn.ok) { <circle [attr.r]="sn.r * 1.25" [attr.fill]="sn.target" opacity=".5" filter="url(#dglow)" /> }
+      <circle [attr.r]="sn.r" fill="#0b0e22" [attr.stroke]="sn.ring" [attr.stroke-width]="sn.r * .3" [attr.stroke-dasharray]="sn.noTarget ? '3 3' : null" />
+      <circle [attr.r]="sn.r * .53" [attr.fill]="sn.fill" [attr.stroke]="sn.dark ? '#4a4f7a' : 'none'" stroke-width="2" />
+      <text x="0" [attr.y]="sn.r * .06" text-anchor="middle" dominant-baseline="middle" [attr.font-size]="sn.r * .65" font-weight="700" [attr.fill]="sn.textFill">{{ sn.label }}</text>
+    </g>
+  }
+
+  @for (l of v.maybe; track $index) {
+    <line [attr.x1]="l.x1" [attr.y1]="l.y1" [attr.x2]="l.x2" [attr.y2]="l.y2" stroke="#fff" stroke-width="2" stroke-dasharray="3 4" opacity=".5" />
+  }
+  @for (l of v.links; track $index) {
+    <line [attr.x1]="l.x1" [attr.y1]="l.y1" [attr.x2]="l.x2" [attr.y2]="l.y2" [attr.stroke]="l.col" [attr.stroke-width]="v.s * .2" stroke-linecap="round" />
+    <line [attr.x1]="l.x1" [attr.y1]="l.y1" [attr.x2]="l.x2" [attr.y2]="l.y2" stroke="#0b0e22" [attr.stroke-width]="v.s * .08" stroke-linecap="round" opacity=".6" />
+  }
+  @for (g of v.glass; track g.k) {
+    <g appShield [t]="g.t" [size]="v.tile" [locked]="g.locked" [attr.transform]="g.transform"></g>
+  }
+
+  @if (v.hoverBox; as hb) {
+    <rect [attr.x]="hb.x" [attr.y]="hb.y" [attr.width]="v.s - 2" [attr.height]="v.s - 2" [attr.rx]="v.s * .14"
+          fill="none" stroke="#ffd25e" stroke-width="2" pointer-events="none" />
+  }
+</svg>

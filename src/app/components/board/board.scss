@@ -1,0 +1,45 @@
+:host { display: block; }
+
+.board {
+  display: block;
+  margin: 0 auto;
+  touch-action: none;
+  overflow: visible;
+  user-select: none;
+}
+
+text {
+  font-family: 'Fredoka', system-ui, sans-serif;
+  pointer-events: none;
+}
+
+.grab { cursor: grab; }
+
+.flow {
+  /* fotones: puntitos redondos que viajan por el rayo */
+  stroke-dasharray: 0 16;
+  stroke-linecap: round;
+  animation: flow .9s linear infinite;
+}
+.tint { transition: fill .25s, stroke .25s; }
+@keyframes flow { to { stroke-dashoffset: -16; } }
+
+.hl { animation: hlPulse 1s ease-in-out infinite; }
+@keyframes hlPulse { 50% { opacity: .45; } }
+
+.sensor-ok {
+  animation: okPulse 1.6s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+@keyframes okPulse { 50% { transform: scale(1.08); } }
+
+.ping {
+  animation: ping .9s ease-out forwards;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+@keyframes ping {
+  from { opacity: 1; transform: scale(.6); }
+  to { opacity: 0; transform: scale(1.8); }
+}
