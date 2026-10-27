@@ -1,0 +1,16 @@
+{
+  "hosting": {
+    "public": "dist/Logic_RGB_graficos/browser",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
